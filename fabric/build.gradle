@@ -35,8 +35,22 @@ processResources {
     def version = project.version
     inputs.property "version", version
 
+    def getModVersion = { ->
+        version = project.mod_version
+        minecraft_version = project.minecraft_version
+        suffix = project.minecraft_version_suffix
+        Provider<String> output = providers.exec {
+            commandLine('git', 'rev-list', '--count', 'HEAD')
+        }.standardOutput.asText
+
+        return version + "." + output.get().trim().toString() + "-mc" + minecraft_version + suffix
+    }
+
     filesMatching("fabric.mod.json") {
-//        expand "version": version
+        expand([
+                "version": getModVersion(),
+                "minecraft_dependency": project.minecraft_dependency
+        ])
     }
 }
 
