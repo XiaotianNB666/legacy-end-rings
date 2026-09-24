@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "cn.gcte.mixin",
+  "package": "cn.gcte.legacyendrings.mixin",
   "compatibilityLevel": "JAVA_25",
   "mixins": [
     "EndIslandFunctionMixin"

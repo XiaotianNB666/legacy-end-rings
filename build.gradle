@@ -1,93 +1,59 @@
-import net.fabricmc.loom.task.RemapJarTask
-
 plugins {
-	id 'net.fabricmc.fabric-loom' version "${loom_version}"
-	id 'maven-publish'
 	id 'org.glavo.gradle-wrapper-neo' version "${wrapper_neo_version}"
 }
 
 def getModVersion = { ->
-	version = project.mod_version
-	minecraft_version = project.minecraft_version
+	def baseVersion = rootProject.mod_version
+	def mcVersion   = rootProject.minecraft_version
+	def suffix      = rootProject.minecraft_version_suffix
 	Provider<String> output = providers.exec {
 		commandLine('git', 'rev-list', '--count', 'HEAD')
 	}.standardOutput.asText
-
-	return version + "." + output.get().trim().toString() + "-mc" + minecraft_version + project.minecraft_version_suffix
+	return "${baseVersion}.${output.get().trim()}-mc${mcVersion}${suffix}"
 }
 
-version = getModVersion()
-group = project.maven_group
+def modVersion = getModVersion()
 
-repositories {
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
+allprojects {
+	group   = rootProject.maven_group
+	version = modVersion
 }
 
-loom {
-	splitEnvironmentSourceSets()
-
-	def commonProgramArgs = ["--width", "1280", "--height", "--720", "--username", "LegacyEndRingDev"]
-
-	runs {
-		named("client") {
-			generateRunConfig.set(true)
-			programArguments.set(commonProgramArgs)
-		}
-	}
-}
-
-dependencies {
-	// To change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
-}
-
-processResources {
-	filesMatching("fabric.mod.json") {
-		expand([
-				"version": getModVersion(),
-				"minecraft_dependency": project.minecraft_dependency
-		])
-	}
-}
-
-base {
-	archivesName = project.name + "-" + getVersion()
-}
-
-tasks.withType(JavaCompile).configureEach {
-	it.options.release = 25
-}
-
-java {
-	withSourcesJar()
-
-	sourceCompatibility = JavaVersion.VERSION_25
-	targetCompatibility = JavaVersion.VERSION_25
-}
-
-jar {
-	def projectName = project.name
-	inputs.property "projectName", projectName
-
-	from("LICENSE") {
-		rename { "${it}_$projectName"}
-	}
-}
-
-// configure the maven publication
-publishing {
-	publications {
-		create("mavenJava", MavenPublication) {
-			from components.java
-		}
-	}
+subprojects {
+	apply plugin: 'java'
+	apply plugin: 'maven-publish'
 
 	repositories {
 		mavenLocal()
+	}
+
+	tasks.withType(JavaCompile).configureEach {
+		it.options.release = 25
+	}
+
+	java {
+		withSourcesJar()
+		sourceCompatibility = JavaVersion.VERSION_25
+		targetCompatibility = JavaVersion.VERSION_25
+	}
+
+	jar {
+		def rootProjectName = rootProject.name
+		def projectName = project.name
+		inputs.property "projectName", projectName
+		from(rootProject.file("LICENSE")) {
+			rename { "${rootProjectName}_${it}_${projectName}" }
+		}
+	}
+
+	publishing {
+		publications {
+			create("mavenJava", MavenPublication) {
+				from components.java
+			}
+		}
+		repositories {
+			mavenLocal()
+		}
 	}
 }

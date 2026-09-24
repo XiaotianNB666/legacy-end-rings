@@ -9,5 +9,11 @@ pluginManagement {
 	}
 }
 
+plugins {
+	id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+
 // Should match your modid
 rootProject.name = 'legacy-end-rings'
+
+include(':fabric', ':neoforge')

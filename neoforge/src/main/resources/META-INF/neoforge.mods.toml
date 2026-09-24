@@ -1,0 +1,40 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+issueTrackerURL = "https://github.com/XiaotianNB666/legacy-end-rings"
+displayURL = "https://modrinth.com/mod/legacy-end-rings/versions"
+iconFile = "icon.png"
+license="MIT"
+
+[[mods]]
+modId="legacy_end_rings"
+version="${version}"
+displayName="Legacy End Rings"
+authors="XiaotianMC"
+credits = '''
+EnderPhantomWing
+XM_QWQ_
+'''
+description='''
+Contributors:
+ - EnderPhantomWing
+ - XM_QWQ_
+Reintroduces the classic End Void Ring generation from 26.3-snapshot-5 and below.
+Restores the integer overflow behavior that created concentric void rings.
+'''
+
+[[mixins]]
+config="legacy_end_rings.mixins.json"
+
+[[dependencies.legacy_end_rings]]
+modId="neoforge"
+type="required"
+versionRange="[${neoforge_version},)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.legacy_end_rings]]
+modId="minecraft"
+type="required"
+versionRange="${minecraft_dependency_neo}"
+ordering="NONE"
+side="BOTH"

@@ -1,26 +1,30 @@
 {
 	"schemaVersion": 1,
-	"id": "legacy-end-rings",
+	"id": "legacy_end_rings",
 	"version": "${version}",
 	"name": "Legacy End Rings",
 	"description": "Reintroduces the classic End Void Ring generation from 26.3-snapshot-5 and below.\nRestores the integer overflow behavior that created concentric void rings.",
 	"authors": [
 		"XiaotianMC"
 	],
+	"contributors": [
+		"EnderPhantomWing",
+		"XM_QWQ_"
+	],
 	"contact": {
 		"homepage": "https://github.com/XiaotianNB666/legacy-end-rings",
 		"sources": ""
 	},
 	"license": "MIT",
-	"icon": "assets/legacy-end-rings/icon.png",
+	"icon": "assets/legacy_end_rings/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"cn.gcte.LegacyEndRings"
+			"cn.gcte.legacyendrings.LegacyEndRings"
 		]
 	},
 	"mixins": [
-		"legacy-end-rings.mixins.json"
+		"legacy_end_rings.mixins.json"
 	],
 	"depends": {
 		"fabricloader": "*",

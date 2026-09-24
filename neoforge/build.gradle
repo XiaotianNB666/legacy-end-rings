@@ -1,27 +1,5 @@
 plugins {
-    id 'net.neoforged.moddev' version '1.0.+'
-    id 'maven-publish'
-}
-
-version = project.mod_version
-group = project.maven_group
-
-repositories {}
-
-dependencies {
-    annotationProcessor "org.spongepowered:mixin:0.8.5"
-}
-
-sourceSets {
-    main {
-        java {
-            srcDirs = ['../src/main/java']
-        }
-        resources {
-            srcDirs = ['../src/main/resources']
-            exclude 'fabric.mod.json'
-        }
-    }
+    id 'net.neoforged.moddev' version "${moddev_version}"
 }
 
 neoForge {
@@ -30,31 +8,37 @@ neoForge {
     runs {
         client {
             client()
+            programArguments.addAll("--width", "1280", "--height", "720", "--username", "LegacyEndRingDev")
         }
         server {
             server()
         }
     }
-}
 
-tasks.withType(JavaCompile).configureEach {
-    it.options.release = 25
-}
-
-java {
-    withSourcesJar()
-    sourceCompatibility = JavaVersion.VERSION_25
-    targetCompatibility = JavaVersion.VERSION_25
-}
-
-jar {
-    archiveBaseName = "legacy-end-rings-neoforge"
-}
-
-publishing {
-    publications {
-        create("mavenJava", MavenPublication) {
-            from components.java
+    mods {
+        legacy_end_rings {          // 与 neoforge.mods.toml 中的 modId 一致
+            sourceSet sourceSets.main
         }
     }
+}
+
+dependencies {
+}
+
+processResources {
+    filesMatching("META-INF/neoforge.mods.toml") {
+        expand([
+                "version"               : project.version.toString(),
+                "neoforge_version"      : project.neoforge_version,
+                "minecraft_dependency_neo"  : project.minecraft_dependency_neo
+        ])
+    }
+}
+
+base {
+    archivesName = "legacy_end_rings"
+}
+
+tasks.withType(AbstractArchiveTask).configureEach {
+    archiveVersion = "${project.version}-neoforge"
 }

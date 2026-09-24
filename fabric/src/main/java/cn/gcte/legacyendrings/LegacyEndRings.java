@@ -1,4 +1,4 @@
-package cn.gcte;
+package cn.gcte.legacyendrings;
 
 import net.fabricmc.api.ModInitializer;
 
@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LegacyEndRings implements ModInitializer {
-	public static final String MOD_ID = "legacy-end-rings";
+	public static final String MOD_ID = "legacy_end_rings";
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 

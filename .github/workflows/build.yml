@@ -1,17 +1,25 @@
-# Automatically build the project and run any configured tests for every push
-# and submitted pull request. This can help catch issues that only occur on
-# certain platforms or Java versions, and provides a first line of defence
-# against bad commits.
-
 name: build
 on:
   push:
   pull_request:
   workflow_dispatch:
+    inputs:
+      push_to_modrinth:
+        description: 'Whether to push the mod to Modrinth'
+        required: false
+        default: false
+        type: boolean
+      branch_name:
+        description: 'Name of the branch to create and push (leave blank to skip creation)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
       - name: checkout repository
         uses: actions/checkout@v6
@@ -34,4 +42,44 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: legacy-end-rings-${{ env.COMMIT_COUNT }}-${{ env.COMMIT_HASH }}
-          path: build/libs/
+          path: |
+            fabric/build/libs/
+            neoforge/build/libs/
+      - name: read version-specific properties
+        id: properties_v
+        uses: BrycensRanch/read-properties-action@v1
+        with:
+          file: gradle.properties
+          all: true
+      - name: create and push branch
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.branch_name != '' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --heads origin "${{ inputs.branch_name }}" | grep -q "${{ inputs.branch_name }}"; then
+            echo "Branch ${{ inputs.branch_name }} already exists; skipping creation."
+          else
+            git checkout -b "${{ inputs.branch_name }}"
+            git push origin "${{ inputs.branch_name }}"
+            echo "Branch ${{ inputs.branch_name }} successfully created and pushed."
+          fi
+      - name: publish to modrinth
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.push_to_modrinth }}
+        uses: Kira-NT/mc-publish@v3.3
+        with:
+          modrinth-id: 8wdBiYNU
+          modrinth-token: ${{ secrets.MODRINTH_API_TOKEN }}
+          modrinth-featured: true
+
+          name: legacy-end-rings-1.0.${{ env.COMMIT_COUNT }}
+          version: 1.0.${{ env.COMMIT_COUNT }}
+          version-type: release
+
+          files: |
+            fabric/build/libs/*.jar
+            neoforge/build/libs/*.jar
+
+          loaders: |
+            fabric
+            neoforge
+          game-versions: ${{ steps.properties_v.outputs.game_versions }}

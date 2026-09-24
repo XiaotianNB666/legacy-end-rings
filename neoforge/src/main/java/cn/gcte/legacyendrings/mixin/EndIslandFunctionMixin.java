@@ -1,4 +1,4 @@
-package cn.gcte.mixin;
+package cn.gcte.legacyendrings.mixin;
 
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.densityfunction.DensityFunction;
@@ -12,7 +12,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(EndIslandFunction.class)
 public abstract class EndIslandFunctionMixin implements DensityFunction {
 
-	@Inject(method = "getHeightValue", at = @At("HEAD"), cancellable = true)
+	@Inject(
+			method = "getHeightValue(Lnet/minecraft/world/level/levelgen/synth/SimplexNoise;II)F",
+			at = @At("HEAD"),
+			cancellable = true
+	)
 	private static void injectOldOverflow(
             SimplexNoise islandNoise, int sectionX, int sectionZ, CallbackInfoReturnable<Float> cir
     ) {
