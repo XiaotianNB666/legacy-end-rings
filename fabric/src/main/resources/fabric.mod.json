@@ -12,8 +12,8 @@
 		"XM_QWQ_"
 	],
 	"contact": {
-		"homepage": "https://github.com/XiaotianNB666/legacy-end-rings",
-		"sources": ""
+		"homepage": "https://modrinth.com/mod/legacy-end-rings",
+		"sources": "https://github.com/XiaotianNB666/legacy-end-rings"
 	},
 	"license": "MIT",
 	"icon": "assets/legacy_end_rings/icon.png",
