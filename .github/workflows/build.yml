@@ -82,4 +82,4 @@ jobs:
           loaders: |
             fabric
             neoforge
-          game-versions: ${{ steps.properties_v.outputs.game_versions }}
+          game-versions: ${{ steps.properties_v.outputs.game_version }}
